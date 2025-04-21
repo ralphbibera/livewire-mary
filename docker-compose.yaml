@@ -1,0 +1,40 @@
+networks:
+  livewire-network:
+
+volumes:
+  livewire-data:
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: livewire_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app
+    networks:
+      - livewire-network
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        composer install
+        npm install
+        (npm run dev)
+        php artisan migrate:fresh --seed
+        php artisan serve --host=0.0.0.0 --port=8000
+
+  db:
+    image: postgres:17
+    container_name: livewire_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - livewire-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=livewire
+    networks:
+      - livewire-network
