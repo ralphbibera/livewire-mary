@@ -17,16 +17,16 @@ RUN --mount=type=cache,target=/var/cache/apt \
     zip \
     libzip-dev \
     p7zip-full \
+    nodejs \
+    npm \
     # Install Composer
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     # Install PHP extensions
-    && docker-php-ext-install pdo pdo_pgsql \
-    && docker-php-ext-install zip \
+    && docker-php-ext-install pdo pdo_pgsql zip \
     && docker-php-ext-enable zip \
-    # Check for mbstring module
-    && php -m | grep mbstring \
     # Clean up to reduce image size
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 WORKDIR /app
 COPY ./src /app
+

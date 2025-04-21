@@ -20,10 +20,21 @@ services:
     command:
       - |
         composer install
-        npm install
-        (npm run dev)
         php artisan migrate:fresh --seed
+        php artisan key:generate
         php artisan serve --host=0.0.0.0 --port=8000
+
+  vite:
+    container_name: livewire_vite
+    image: node:20
+    working_dir: /app
+    volumes:
+      - ./src:/app
+    networks:
+      - livewire-network
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
 
   db:
     image: postgres:17
